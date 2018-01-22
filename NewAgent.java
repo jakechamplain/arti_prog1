@@ -1,9 +1,12 @@
 
 
-import java.util.Collection;
+import java.util.ArrayList;
+import java.util.Collection; 
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+
 
 public class NewAgent implements Agent
 {
@@ -13,7 +16,9 @@ public int homeY = 0;
 public int sizeX = 0;
 public int sizeY = 0;
 String orientation;
-String at;
+ArrayList<String> atObst = new ArrayList<String>();
+ArrayList<String> atDirt = new ArrayList<String>();
+
 
 		/*
 			init(Collection<String> percepts) is called once before you have to select the first action. Use it to find a plan. Store the plan and just execute it step by step in nextAction.
@@ -42,7 +47,7 @@ String at;
 					if (perceptName.equals("HOME")) {
 						Matcher m = Pattern.compile("\\(\\s*HOME\\s+([0-9]+)\\s+([0-9]+)\\s*\\)").matcher(percept);
 						if (m.matches()) {
-							System.out.println("robot is at " + m.group(1) + "," + m.group(2));
+							System.out.println("Robot is at " + m.group(1) + "," + m.group(2));
 							homeX = Integer.parseInt(m.group(1));
 							homeY = Integer.parseInt(m.group(2));
 						}
@@ -61,9 +66,17 @@ String at;
 						}
 					}
 					if (perceptName.equals("AT")) { //THIS IS NOT FINISHED
-						Matcher m = Pattern.compile("\\(\\s*AT\\s+([A-Z]+)\\s+([0-9]+)\\s+([0-9]+)\\s*\\)").matcher(percept);
-						if (m.matches()) {
-							at = m.group(1);
+
+						//Matcher m = Pattern.compile("\\(\\s*AT\\s+([A-Z]+)\\s+([0-9]+)\\s+([0-9]+)\\s*\\)").matcher(percept);
+						Matcher m1 = Pattern.compile("\\(\\s*AT\\s+(DIRT+)\\s+([0-9]+)\\s+([0-9]+)\\s*\\)").matcher(percept);
+						if (m1.matches()) {
+							atDirt.add(m1.group());
+						
+						}
+						Matcher m2 = Pattern.compile("\\(\\s*AT\\s+(OBSTACLE+)\\s+([0-9]+)\\s+([0-9]+)\\s*\\)").matcher(percept);
+						if (m2.matches()) {
+							atObst.add(m2.group());
+						
 						}
 					}
 					else {
@@ -73,18 +86,40 @@ String at;
 					System.err.println("strange percept that does not match pattern: " + percept);
 				}
 			}
+			
+			
+			State initialState = new State(sizeX, sizeY, false,homeX,homeY,orientation); //atDirt
 	    }
 
 	    public String nextAction(Collection<String> percepts) {
 	    		
+	    		System.out.print(" -- NEW STEP --");
+	     	System.out.printf("%n");
 	     	System.out.print("The size of the enviroment is " + sizeX + " , " + sizeY);
-			System.out.print("  Perceiving:");
+	     	System.out.printf("%n");
+	     	System.out.printf("The original orientation was " + orientation);
+	     	System.out.printf("%n");
+	     	System.out.println("Initial dirt: " + atDirt); //List containing all the original positions of dirt
+	     	System.out.printf("%n");
+	     	System.out.println("Obstacles: " + atObst); //List containing obstacles
+	     	
+	     	
+			System.out.print("Perceiving:");
 			for(String percept:percepts) { //THIS IS NOT REALLY NECESARY
-				System.out.print("'" + percept + "', "); //BUMP edo DIRT ematen du
+				System.out.print("'" + percept + "', "); //BUMP or DIRT
 			}
 			System.out.println("");
-			String[] actions = { "TURN_ON", "TURN_OFF", "TURN_RIGHT", "TURN_LEFT", "GO", "SUCK" };
-			return actions[0]; //Turn on
+			//String[] actions = { "TURN_ON", "TURN_OFF", "TURN_RIGHT", "TURN_LEFT", "GO", "SUCK" };
+			
+			
+			State currentS = new State(sizeX, sizeY, true, homeX, homeX, orientation);
+			currentS.giveLegalOptions(); //Method that creates the list of valid options
+			
+			
+			
+			return currentS.moves.get(0);
+			
+	
 		}
 
 
