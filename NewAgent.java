@@ -1,4 +1,3 @@
-
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Collection; 
@@ -128,8 +127,11 @@ int[][] d_coor;
 			}
 
 			
-		//	Environment initialEnv = new Environment(sizeX, sizeY, o_coor);
-		//	State initialState = new State(false,homeX,homeY,orientation, d_coor, initialEnv); //atDirt
+			Environment initialEnv = new Environment(sizeX, sizeY, o_coor);
+			State initialState = new State(false, home_point, orientation, d_coor, initialEnv); //atDirt
+			Search search = new Search(initialState);
+			System.out.println("*************************************************");
+			search.test();
 	    }
 
 	    public String nextAction(Collection<String> percepts) {

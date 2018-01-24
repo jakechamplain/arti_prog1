@@ -1,4 +1,5 @@
 import java.awt.geom.Point2D;
+import java.lang.Object;
 import java.util.ArrayList;
 
 public class State {
@@ -18,6 +19,10 @@ public class State {
 	int sizeY;
 	ArrayList<Point2D> o_points; //Location of obstacles
 
+	//https://stackoverflow.com/questions/15020850/copy-constructors-and-defensive-copying
+	public State(State s) {
+		this(s.getRobotOn(), s.getRobotPoint(), s.getRobotO(), s.getDCoor(), s.getEnv());
+	}
 
 	public State(boolean r_on, Point2D ir_point, String r_o, int[][] idirt, Environment ienv) { 
 		robot_on = r_on;
@@ -57,8 +62,24 @@ public class State {
 		}
 	}
 	
+	public boolean getRobotOn() {
+		return robot_on;
+	}
+	
+	public Point2D getRobotPoint() {
+		return (Point2D)robot_point.clone();
+	}
+	
 	public String getRobotO(){
 		return robot_o;
+	}
+	
+	public int[][] getDCoor() {
+		return d_coor;
+	}
+	
+	public Environment getEnv() {
+		return env;
 	}
 	
 	public void setRobotO(String o) {
@@ -74,10 +95,9 @@ public class State {
 		System.out.println("THE CURRENT ORIENTATION OF THE ROBOT IS: " + robot_o);
 		moves = new ArrayList<String>();
 		
-		if (!robot_on) {
+		if (false) {
 			moves.add("TURN_ON");
 			robot_on = true;
-	
 		}
 		else if (dirtPresent() != -1) { //If there is dirt at the position of the robot
 			moves.add("SUCK");
