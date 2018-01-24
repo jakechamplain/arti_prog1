@@ -18,13 +18,16 @@ public class Node {
 		children = new ArrayList<Node>();
 	}
 	
-	public Node(int d, int pc, boolean e, State s, Node p) {
+	public Node(int d, int pc, boolean e, String move, Node p) {
 		depth = d;
 		pathCost = pc;
 		expanded = e;
-		state = s;
+		state = p.getState();
 		parent = p;
 		children = new ArrayList<Node>();
+		if(move != "") {
+			this.setState(move);
+		}
 	}
 	
 	public void setChild(Node child) {
@@ -57,6 +60,53 @@ public class Node {
 		}
 		else {
 			return null;
+		}
+	}
+	
+	public void setState(String move) {
+		String orientation = "";
+		int dirt_index;
+		
+		if(move == "TURN_RIGHT") {
+			switch(this.state.getRobotO()) {
+			case "NORTH":
+				orientation = "EAST";
+				break;
+			case "EAST":
+				orientation = "SOUTH";
+				break;
+			case "SOUTH":
+				orientation = "WEST";
+				break;
+			case "WEST":
+				orientation = "NORTH";
+				break;
+			}
+			this.state.setRobotO(orientation);
+		}
+		else if(move == "TURN_LEFT") {
+			switch(this.state.getRobotO()) {
+			case "NORTH":
+				orientation = "WEST";
+				break;
+			case "WEST":
+				orientation = "SOUTH";
+				break;
+			case "SOUTH":
+				orientation = "EAST";
+				break;
+			case "EAST":
+				orientation = "NORTH";
+				break;
+			}
+			this.state.setRobotO(orientation);
+		}
+		else if(move == "GO") {
+			this.state.robotGo();
+		}
+		else if(move == "SUCK") {
+			dirt_index = this.state.dirtPresent();
+			this.state.removeDirt(dirt_index);
 		}
 	}
 }
