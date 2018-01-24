@@ -4,6 +4,7 @@ public class Node {
 	private int depth;
 	private int pathCost;
 	private boolean expanded;
+	private String move;
 	private State state;
 	private Node parent;
 	private ArrayList<Node> children;
@@ -13,20 +14,22 @@ public class Node {
 		depth = 0;
 		pathCost = 0;
 		expanded = false;
+		move = "";
 		state = s;
 		parent = null;
 		children = new ArrayList<Node>();
 	}
 	
-	public Node(int d, int pc, boolean e, String move, Node p) {
+	public Node(int d, int pc, boolean e, String m, Node p) {
 		depth = d;
 		pathCost = pc;
 		expanded = e;
-		state = p.getState();
+		move = m;
+		state = new State(p.getState());
 		parent = p;
 		children = new ArrayList<Node>();
-		if(move != "") {
-			this.setState(move);
+		if(this.move != "") {
+			this.setState();
 		}
 	}
 	
@@ -46,6 +49,10 @@ public class Node {
 		return expanded;
 	}
 	
+	public String getMove() {
+		return move;
+	}
+	
 	public State getState() {
 		return state;
 	}
@@ -63,11 +70,11 @@ public class Node {
 		}
 	}
 	
-	public void setState(String move) {
+	public void setState() {
 		String orientation = "";
 		int dirt_index;
 		
-		if(move == "TURN_RIGHT") {
+		if(this.move == "TURN_RIGHT") {
 			switch(this.state.getRobotO()) {
 			case "NORTH":
 				orientation = "EAST";
@@ -84,7 +91,7 @@ public class Node {
 			}
 			this.state.setRobotO(orientation);
 		}
-		else if(move == "TURN_LEFT") {
+		else if(this.move == "TURN_LEFT") {
 			switch(this.state.getRobotO()) {
 			case "NORTH":
 				orientation = "WEST";
@@ -101,10 +108,10 @@ public class Node {
 			}
 			this.state.setRobotO(orientation);
 		}
-		else if(move == "GO") {
+		else if(this.move == "GO") {
 			this.state.robotGo();
 		}
-		else if(move == "SUCK") {
+		else if(this.move == "SUCK") {
 			dirt_index = this.state.dirtPresent();
 			this.state.removeDirt(dirt_index);
 		}
