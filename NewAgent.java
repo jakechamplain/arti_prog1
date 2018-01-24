@@ -1,5 +1,5 @@
 
-
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Collection; 
 import java.util.Random;
@@ -11,13 +11,17 @@ import java.util.regex.Pattern;
 public class NewAgent implements Agent
 {
 
+public int step_counter = 0;
 public int homeX = 0;
 public int homeY = 0;
+private Point2D home_point;
 public int sizeX = 0;
 public int sizeY = 0;
 String orientation;
 ArrayList<String> atObst = new ArrayList<String>();
 ArrayList<String> atDirt = new ArrayList<String>();
+int[][] o_coor;
+int[][] d_coor;
 
 
 		/*
@@ -50,6 +54,7 @@ ArrayList<String> atDirt = new ArrayList<String>();
 							System.out.println("Robot is at " + m.group(1) + "," + m.group(2));
 							homeX = Integer.parseInt(m.group(1));
 							homeY = Integer.parseInt(m.group(2));
+							home_point = new Point2D.Double(homeX,homeY);
 						}
 					}
 					if (perceptName.equals("SIZE")) {
@@ -57,6 +62,7 @@ ArrayList<String> atDirt = new ArrayList<String>();
 						if (m.matches()) {
 							sizeX = Integer.parseInt(m.group(1));
 							sizeY = Integer.parseInt(m.group(2));
+							
 						}
 					}
 					if (perceptName.equals("ORIENTATION")) {
@@ -87,18 +93,49 @@ ArrayList<String> atDirt = new ArrayList<String>();
 				}
 			}
 			
+			//Still inside 'init'
 			
-			State initialState = new State(sizeX, sizeY, false,homeX,homeY,orientation); //atDirt
+			//Probably not the most elegant way of separating the obstacles, but it works
+			String[] obstacles = atObst.toArray(new String[atObst.size()]);
+			o_coor = new int[obstacles.length][2];
+			for (int i = 0; i< obstacles.length; i++) {
+				
+				Pattern pattern = Pattern.compile("\\(\\s*AT\\s+(OBSTACLE+)\\s+([0-9]+)\\s+([0-9]+)\\s*\\)");
+
+				Matcher matcher = pattern.matcher(obstacles[i]);
+				if (matcher.matches()) {
+				
+				o_coor[i][0] = Integer.parseInt(matcher.group(2));
+				o_coor[i][1] = Integer.parseInt(matcher.group(3));
+				}
+				
+			}
+			
+			//Separate dirt coordinates
+			String[] dirts = atDirt.toArray(new String[atDirt.size()]);
+			d_coor = new int[dirts.length][2];
+			for (int i = 0; i< dirts.length; i++) {
+				
+				Pattern pattern = Pattern.compile("\\(\\s*AT\\s+(DIRT+)\\s+([0-9]+)\\s+([0-9]+)\\s*\\)");
+
+				Matcher matcher = pattern.matcher(dirts[i]);
+				if(matcher.matches()) {
+				
+				d_coor[i][0] = Integer.parseInt(matcher.group(2));
+				d_coor[i][1] = Integer.parseInt(matcher.group(3));
+				}
+				
+			}
+
+			
+		//	Environment initialEnv = new Environment(sizeX, sizeY, o_coor);
+		//	State initialState = new State(false,homeX,homeY,orientation, d_coor, initialEnv); //atDirt
 	    }
 
 	    public String nextAction(Collection<String> percepts) {
 	    		
 	    		System.out.print(" -- NEW STEP --");
-	     	System.out.printf("%n");
-	     	System.out.print("The size of the enviroment is " + sizeX + " , " + sizeY);
-	     	System.out.printf("%n");
-	     	System.out.printf("The original orientation was " + orientation);
-	     	System.out.printf("%n");
+		    System.out.printf("%n");
 	     	System.out.println("Initial dirt: " + atDirt); //List containing all the original positions of dirt
 	     	System.out.printf("%n");
 	     	System.out.println("Obstacles: " + atObst); //List containing obstacles
@@ -108,16 +145,26 @@ ArrayList<String> atDirt = new ArrayList<String>();
 			for(String percept:percepts) { //THIS IS NOT REALLY NECESARY
 				System.out.print("'" + percept + "', "); //BUMP or DIRT
 			}
-			System.out.println("");
 			//String[] actions = { "TURN_ON", "TURN_OFF", "TURN_RIGHT", "TURN_LEFT", "GO", "SUCK" };
 			
+			String[] test_actions = { "TURN_ON" };
+			step_counter++;
+			Environment testEnv = new Environment(sizeX, sizeY, o_coor);
 			
-			State currentS = new State(sizeX, sizeY, true, homeX, homeX, orientation);
+			
+			State currentS = new State( true, home_point, orientation, d_coor, testEnv);
 			currentS.giveLegalOptions(); //Method that creates the list of valid options
 			
-			
-			
-			return currentS.moves.get(0);
+			//return currentS.moves.get(0);
+			if (step_counter < 2) {
+				
+				
+				return test_actions[step_counter-1];
+				
+				
+			} else {
+				return currentS.moves.get(0);
+			}
 			
 	
 		}
