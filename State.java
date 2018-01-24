@@ -36,8 +36,38 @@ public class State {
 		sizeY = env.getSizeY();
 		o_points = env.getObstacles();
 		
+	}
+	
+	public void robotGo() {
+		double rx = this.robot_point.getX();
+		double ry = this.robot_point.getY();
+		switch(this.robot_o) {
+		case "NORTH":
+			this.robot_point.setLocation(rx, ry + 1);
+			break;
+		case "EAST":
+			this.robot_point.setLocation(rx + 1, ry);
+			break;
+		case "SOUTH":
+			this.robot_point.setLocation(rx, ry - 1);
+			break;
+		case "WEST":
+			this.robot_point.setLocation(rx - 1, ry);
+			break;
 		}
+	}
+	
+	public String getRobotO(){
+		return robot_o;
+	}
+	
+	public void setRobotO(String o) {
+		robot_o = o;
+	}
 
+	public void removeDirt(int index) {
+		this.dirt_points.remove(index);
+	}
 	
 	public void giveLegalOptions() {
 		
@@ -49,7 +79,7 @@ public class State {
 			robot_on = true;
 	
 		}
-		else if (dirtPresent()) { //If there is dirt at the position of the robot
+		else if (dirtPresent() != -1) { //If there is dirt at the position of the robot
 			moves.add("SUCK");
 		
 		} else if (isGOLegal()) {
@@ -80,9 +110,9 @@ public class State {
 		State futureState = new State(r_x,r_y,r_o);
 	}*/
 	
-	private boolean dirtPresent() {
+	public int dirtPresent() {
 		int matches = 0;
-		
+		int index = -1;
 		/*
      	System.out.printf("%n");
      	System.out.println("The robot is located at:");
@@ -103,13 +133,14 @@ public class State {
 				//WILL REQUIRE EXTRACTIN INFOR ABOUT dirt_points.get(i) AND REMOVING
 				//THOSE COORDINATES FROM THE LIST WE ARE IMPUTING
 				matches++;
-				
+				index = i;
+				break;
 			} 
 		}
 		if (matches != 0) {
-			return true;
+			return index;
 		} else {
-			return false;
+			return -1;
 		}
 		
 	}
