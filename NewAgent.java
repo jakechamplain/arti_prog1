@@ -131,7 +131,7 @@ int[][] d_coor;
 			State initialState = new State(false, home_point, orientation, d_coor, initialEnv); //atDirt
 			Search search = new Search(initialState);
 			System.out.println("*************************************************");
-			search.test();
+			//ArrayList<String> path1 = search.breadthFirstSearch();
 	    }
 
 	    public String nextAction(Collection<String> percepts) {

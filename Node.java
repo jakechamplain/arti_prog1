@@ -70,11 +70,19 @@ public class Node {
 		}
 	}
 	
+	public void setExpanded(boolean e) {
+		expanded = e;
+	}
+	
 	public void setState() {
 		String orientation = "";
 		int dirt_index;
 		
-		if(this.move == "TURN_RIGHT") {
+		if(this.move == "SUCK") {
+			dirt_index = state.dirtPresent();
+			state.removeDirt(dirt_index);
+		}
+		else if(this.move == "TURN_RIGHT") {
 			switch(this.state.getRobotO()) {
 			case "NORTH":
 				orientation = "EAST";
@@ -110,10 +118,6 @@ public class Node {
 		}
 		else if(this.move == "GO") {
 			this.state.robotGo();
-		}
-		else if(this.move == "SUCK") {
-			dirt_index = this.state.dirtPresent();
-			this.state.removeDirt(dirt_index);
 		}
 	}
 }
