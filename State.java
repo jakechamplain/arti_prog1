@@ -78,6 +78,10 @@ public class State {
 		return d_coor;
 	}
 	
+	public ArrayList<Point2D> getDirtPoints() {
+		return dirt_points;
+	}
+	
 	public Environment getEnv() {
 		return env;
 	}
@@ -101,7 +105,7 @@ public class State {
 		}
 		else if (dirtPresent() != -1) { //If there is dirt at the position of the robot
 			moves.add("SUCK");
-		
+			System.out.println("-----SUCK ADDED TO LEGAL MOVES LIST-----");
 		} else if (isGOLegal()) {
 			moves.add("GO");
 			System.out.println("-----GO ADDED TO LEGAL MOVES LIST-----");
@@ -131,8 +135,6 @@ public class State {
 	}*/
 	
 	public int dirtPresent() {
-		int matches = 0;
-		int index = -1;
 		/*
      	System.out.printf("%n");
      	System.out.println("The robot is located at:");
@@ -141,28 +143,16 @@ public class State {
      	System.out.printf("%n");
      	System.out.println("The coordinates for the dirt are: ");
      	*/
-		for (int i = 0; i <= d_coor.length-1; i++) {
-			
-
+		for (int i = 0; i < dirt_points.size(); i++) {
 			//System.out.println(dirt_points.get(i));
-			
-			
 			if ( robot_point.equals(dirt_points.get(i))) {
-				
 				//REMEMBER NOT TO IMPUT THIS POSITION OF DIRT ANYMORE!!!!!
 				//WILL REQUIRE EXTRACTIN INFOR ABOUT dirt_points.get(i) AND REMOVING
 				//THOSE COORDINATES FROM THE LIST WE ARE IMPUTING
-				matches++;
-				index = i;
-				break;
+				return i;
 			} 
 		}
-		if (matches != 0) {
-			return index;
-		} else {
-			return -1;
-		}
-		
+		return -1;
 	}
 	
 	private boolean isGOLegal() {
