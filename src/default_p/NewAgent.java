@@ -89,7 +89,9 @@ ArrayList<String> correct_moves_reordered = new ArrayList<String>();
 					System.err.println("strange percept that does not match pattern: " + percept);
 				}
 			}
-						
+			
+			System.out.println("Detected " + atDirt.size() + " dirt");
+			
 			//Take the coordinates of the obstacles and store them in a 2D array
 			String[] obstacles = atObst.toArray(new String[atObst.size()]);
 			o_coor = new int[obstacles.length][2];

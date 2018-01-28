@@ -4,6 +4,10 @@ import java.util.ArrayList;
 
 public class Search {
 
+	public enum SearchType {
+		BREADTH, DEPTH, A_STAR;
+	}
+	
 	//Data	
 	private State first_state; //State of the root Node
 	private State goalState; //State of the goal Node
@@ -14,6 +18,7 @@ public class Search {
 	private int expansion_count = 0; //Count of expansions (For the report)
 	private int max_frontier_size = 0; //Maximum size of the frontier (for the report)
 	public ArrayList<String> correct_move_list; //List of moves that lead to Goal State - BEWARE, IT'S BACKWARDS (reverted in NewAgent)
+	private SearchType search_type;
 	
 	//Constructor
 	public Search(State istate, State igstate) {
@@ -29,6 +34,7 @@ public class Search {
 	
 	//Methods
 	public void breadthFirstSearch() {
+		search_type = SearchType.BREADTH;
 		expand(rootNode);
 		expansion_count++;
 		frontier.remove(0);
@@ -44,6 +50,23 @@ public class Search {
 			expand(next_node);
 
 		
+		}
+	}
+	
+	public void depthFirstSearch() {
+		search_type = SearchType.DEPTH;
+		expand(rootNode);
+		expansion_count++;
+		frontier.remove(0);
+		
+		while(!frontier.isEmpty()) {
+			if (max_frontier_size < frontier.size()) { //Store the biggest seen size of the frontier
+				max_frontier_size = frontier.size();
+			}
+			expansion_count++;
+			next_node = frontier.get(0);
+			frontier.remove(0);
+			expand(next_node);
 		}
 	}
 	
@@ -70,12 +93,20 @@ public class Search {
 					System.out.println("%n");
 					System.out.println("%n");
 					System.out.println("%n");
-					*/
+					*/	
 					correct_move_list = goalReached(child);
 					frontier.clear(); //Empty the Frontier
 				}
-				frontier.add(child); //BEWARE, only works for breadth-first. The location of storage has to change for other methods
-				
+				switch(search_type) {
+				case BREADTH:
+					frontier.add(child); //BEWARE, only works for breadth-first. The location of storage has to change for other methods
+					break;
+				case DEPTH:
+					frontier.add(0, child);
+					break;
+				case A_STAR:
+					break;
+				}
 				//Testing
 				//System.out.println("CHILD NUMBER " + (i+1) + " CREATED, with a STATE where Robot is at " + state_of_child.robot_point + " looking "  + state_of_child.robot_o);
 			}
