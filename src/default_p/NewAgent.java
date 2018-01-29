@@ -89,7 +89,7 @@ ArrayList<String> correct_moves_reordered = new ArrayList<String>();
 					System.err.println("strange percept that does not match pattern: " + percept);
 				}
 			}
-						
+			
 			//Take the coordinates of the obstacles and store them in a 2D array
 			String[] obstacles = atObst.toArray(new String[atObst.size()]);
 			o_coor = new int[obstacles.length][2];
@@ -127,16 +127,17 @@ ArrayList<String> correct_moves_reordered = new ArrayList<String>();
 			System.out.println("*************************************************");
 
 			long startTime = System.nanoTime();
-
-
+			
+			
 			Environment initialEnv = new Environment(sizeX, sizeY, home_point, o_coor);
 			State initialState = new State(home_point, orientation, dirt_points, initialEnv);
 			State goalState = new State(home_point, orientation, emptyAL, initialEnv);
 			Search theSearch = new Search(initialState, goalState);
-
+			
 			//theSearch.breadthFirstSearch();
 			//theSearch.depthFirstSearch();
-			theSearch.aStarSearch();
+			theSearch.uniformCostSearch();
+			//theSearch.aStarSearch();
 			correct_moves = theSearch.correct_move_list;
 						
 			System.out.println("*************************************************");
@@ -155,7 +156,7 @@ ArrayList<String> correct_moves_reordered = new ArrayList<String>();
 			
 			System.out.println("*************************************************");
 			System.out.println("*************************************************");
-			
+
 			long endTime = System.nanoTime();
 
 			long duration = (endTime - startTime)/1000000;
@@ -167,11 +168,11 @@ ArrayList<String> correct_moves_reordered = new ArrayList<String>();
 			
 			System.out.println("*************************************************");
 			System.out.println("*************************************************");
-
 	    }
 
 	    public String nextAction(Collection<String> percepts) {
 	    		
+	    	
 	    		System.out.print(" -- NEW STEP --");
 		    System.out.printf("%n");
 	     	

@@ -5,7 +5,7 @@ import java.util.ArrayList;
 public class Search {
 
 	public enum SearchType {
-		BREADTH, DEPTH, A_STAR;
+		BREADTH, DEPTH, U_COST, A_STAR;
 	}
 	
 	//Data	
@@ -71,6 +71,24 @@ public class Search {
 		}
 	}
 	
+	public void uniformCostSearch() {
+		search_type = SearchType.U_COST;
+		expand(rootNode);
+		expansion_count++;
+		frontier.remove(0);
+		
+		while (!frontier.isEmpty()) { //The Frontier is emptied when the Goal Node is reached
+			if (max_frontier_size < frontier.size()) { //Store the biggest seen size of the frontier
+				max_frontier_size = frontier.size();
+			}
+			expansion_count++;
+			//System.out.println(" EXPANSION NUMBER: " + expansion_count);
+			next_node = frontier.get(0);
+			frontier.remove(0);
+			expand(next_node);
+		}
+	}
+	
 	public void aStarSearch() {
 		search_type = SearchType.A_STAR;
 		expand(rootNode);
@@ -84,11 +102,12 @@ public class Search {
 				max_frontier_size = frontier.size();
 			}
 			expansion_count++;
-			System.out.println("Expansion count: " + expansion_count);
+			//System.out.println("Expansion count: " + expansion_count);
 			next_node = frontier.get(0);
 			frontier.remove(0);
 			expand(next_node);
 		}
+		System.out.println("Expansion count: " + expansion_count);
 	}
 	
 	public void expand( Node currentNode) {
@@ -122,6 +141,17 @@ public class Search {
 					break;
 				case DEPTH:
 					frontier.add(0, child);
+					break;
+				case U_COST:
+					int size = frontier.size();
+					int index = size;
+					for (int k = i; k > 0; k--) {
+						if (frontier.get(size - k).getCost() > child.getCost()) {
+							index = size - k;
+							break;
+						}
+					}
+					frontier.add(index, child);
 					break;
 				case A_STAR:
 					child_eval = evaluationFunction(child);
