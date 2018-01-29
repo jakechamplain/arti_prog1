@@ -32,7 +32,12 @@ public class State {
 	
 	//Methods
 	public ArrayList<Point2D> getDirtPoints() { //Returns coordinates of the dirts that the state has received as input
+
 		return (ArrayList)dirt_points.clone();
+	}
+	
+	public Environment getEnv( ) {
+		return env;
 	}
 	
 	public ArrayList<String> giveLegalOptions() {
@@ -198,7 +203,7 @@ public class State {
 		else if(chosen_move == "SUCK") {
 			dirt_index = dirtOnTile();
 			predict_dirt_points.remove(dirt_index);
-			System.out.println(" -- D I R T  S U C K E D --");
+			//System.out.println(" -- D I R T  S U C K E D --");
 		}
 		
 		State predictState = new State(predict_point, predict_o, predict_dirt_points, env);

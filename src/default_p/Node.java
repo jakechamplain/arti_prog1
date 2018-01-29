@@ -1,7 +1,5 @@
 package default_p;
 
-import java.util.ArrayList;
-
 public class Node {
 
 	//Data
